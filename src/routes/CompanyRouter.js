@@ -1,9 +1,10 @@
 const { Router } = require("express");
-const { createCompanyController } = require("../controllers/CompanyController");
-const { createCompanyValidation } = require("../validators/CompanyValidators");
+const { createCompanyController, editCompanyController, deletCompanyController, getCompaniesController } = require("../controllers/CompanyController");
+const { createCompanyValidation, editCompanyValidation, deleteCompanyValidation } = require("../utils/validators/CompanyValidators");
 const { validateFields } = require("../middleware/validateFields");
 
 const router = Router();
+
 
 
 /**
@@ -30,11 +31,33 @@ const router = Router();
  *       409:
  *         description: Empresa ya existe
  */
+//CREAR
 router.post(
   "/createCompany",
   createCompanyValidation,
   validateFields,
   createCompanyController
 );
+//EDITAR
+router.put(
+  "/editCompany",
+  editCompanyValidation,
+  validateFields,
+  editCompanyController
+);
+//ELIMINAR
+router.post(
+  "/deleteCompany",
+  deleteCompanyValidation,
+  validateFields,
+  deletCompanyController
+);
+
+//Trraer Empresas
+router.get(
+  "/getCompanies",
+  getCompaniesController
+);
+
 
 module.exports = router;

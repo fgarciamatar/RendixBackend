@@ -1,13 +1,13 @@
 const { Router } = require("express");
 const { loginController } = require("../controllers/UserController");
-const { registerController } = require("../controllers/UserController");
+const { registerController, editUserController, deleteUserController, getUsersController } = require("../controllers/UserController");
 const { validateFields } = require("../middleware/validateFields");
-const { loginValidation, registerValidation } = require("../validators/UserValidators");
-
+const { loginValidation, registerValidation, editValidation, deleteValidation, getUsersValidation } = require("../utils/validators/UserValidators");
+const verifyTokenMiddleware = require("../middleware/verifyTokenMiddleware");
 
 
 const router = Router();
-
+//loguear
 /**
  * @swagger
  * /login:
@@ -38,7 +38,7 @@ const router = Router();
  *         description: Usuario no encontrado
  */
 router.post("/login", loginValidation, validateFields, loginController);
-
+//crear
 /**
  * @swagger
  * /register:
@@ -83,8 +83,16 @@ router.post("/login", loginValidation, validateFields, loginController);
  */
 
 router.post("/register", registerValidation, validateFields, registerController);
+ 
+//editar
+router.put("/editUser", editValidation, validateFields, editUserController);
+//eliminar
+router.post("/deleteUser", deleteValidation, validateFields, deleteUserController);
+//traer todos los usuarios por empresa
+router.post("/getUsers",getUsersValidation, validateFields, getUsersController);
 
-
-
+router.get("/verify-token", verifyTokenMiddleware, (req, res) => {
+  res.status(200).json({ valid: true, user: req.user });
+});
 
 module.exports = router;

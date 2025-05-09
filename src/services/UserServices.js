@@ -1,7 +1,5 @@
-
-const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid'); // Para generar el ID del usuario
-const { User, Company } = require('./../models/index');
+const bcrypt = require("bcrypt");
+const { User, Company, SuperAdmin } = require("./../models/index");
 
 exports.findUserByCompanyAndName = async (companyName, userName) => {
   const company = await Company.findOne({ where: { name: companyName } });
@@ -10,31 +8,40 @@ exports.findUserByCompanyAndName = async (companyName, userName) => {
   const user = await User.findOne({
     where: {
       name: userName,
-      companyId: company.id
-    }
+      companyId: company.id,
+    },
   });
 
   return user;
 };
 
-
-exports.registerUser = async ({ companyName, name, lastName, role, password, status }) => {
+exports.registerUser = async ({
+  companyName,
+  name,
+  lastName,
+  role,
+  password,
+  status,
+  id,
+}) => {
   const company = await Company.findOne({ where: { name: companyName } });
   if (!company) throw new Error("Compañía no encontrada");
 
-  const existingUser = await User.findOne({ where: { name, companyId: company.id } });
+  const existingUser = await User.findOne({
+    where: { name, companyId: company.id },
+  });
   if (existingUser) throw new Error("El usuario ya existe en esta compañía");
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
-    id: uuidv4(),
+    id,
     name,
     lastName,
     role,
     password: hashedPassword,
     status,
-    companyId: company.id
+    companyId: company.id,
   });
 
   return {
@@ -43,6 +50,64 @@ exports.registerUser = async ({ companyName, name, lastName, role, password, sta
     lastName: newUser.lastName,
     role: newUser.role,
     status: newUser.status,
-    companyId: newUser.companyId
+    companyId: newUser.companyId,
   };
+};
+
+exports.editUserService = async ({
+  companyName,
+  name,
+  lastName,
+  role,
+  password,
+  status,
+  id,
+  dni,
+}) => {
+  const usuario = await User.findOne({ where: { id: id } });
+  if (!usuario) throw new Error("usuario no encontrada");
+
+  const newUser = await User.update(
+    {
+      id: dni,
+      name,
+      lastName,
+      role,
+      password,
+      status,
+      companyId: company.id,
+    },
+    { where: { id } }
+  );
+
+  return newUser;
+};
+
+exports.deleteUserService = async ({ id, name }) => {
+  const usuario = await User.findOne({ where: { id: id, name: name } });
+  if (!usuario) throw new Error("usuario no encontrada");
+
+  const user = await User.destroy({
+    where: { id },
+  });
+
+  return user;
+};
+
+
+exports.getUsersService = async ({ PIN, company }) => {
+  // const superadmin = await SuperAdmin.findOne();
+  // if (!superadmin) throw new Error("SUPERADMIN no encontrado");
+
+  // const passwordMatch = await bcrypt.compare(PIN.toString(), superadmin.password);
+  // if (!passwordMatch) throw new Error("PIN incorrecto");
+
+  const empresa = await Company.findOne({ where: { name: company } });
+  if (!empresa) throw new Error(`La empresa '${company}' no fue encontrada`);
+
+  const users = await User.findAll({
+    where: { companyId: empresa.id },
+  });
+
+  return users;
 };

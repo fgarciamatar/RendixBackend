@@ -1,23 +1,26 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
-const app = express();
+const { connectDB } = require("./src/models/database");
+
 const routes = require("./src/routes/index");
-const sequelize = require("./sequelize");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./src/config/swagger");
 
+const app = express();
+app.use(cors({
+  origin: process.env.FRONT
+}))
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/", routes);
 
-const PORT = process.env.PORT || 3000; // Si no está definido, usa 3000
+app.get('/', (req, res) => {
+  res.send('Servidor funcionando en Render');
+});
+const PORT = process.env.PORT || 3000;
 
-// Primero conectar a la base de datos, luego iniciar el server
-sequelize.sync({ alter: true }).then(() => {
-  console.log("Modelos sincronizados con la base de datos ✅");
-  app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
-  });
-}).catch((error) => {
-  console.error("Error al sincronizar la base de datos ❌", error);
+app.listen(PORT, async () => {
+  await connectDB(); // 📡 Acá conectás
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

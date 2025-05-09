@@ -1,12 +1,16 @@
-const { findUserByCompanyAndName } = require('./../services/UserServices');
-const { registerUser } = require("../services/UserServices");
-const bcrypt = require('bcrypt');
+require("dotenv").config(); // para leer .env
+const { findUserByCompanyAndName } = require("./../services/UserServices");
+const { registerUser, editUserService, deleteUserService, getUsersService} = require("../services/UserServices");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { logger } = require("sequelize/lib/utils/logger");
+
 
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
 
-  console.log(userName);
-  
+  console.log("Login attempt", { companyName, userName });
+
   if (!companyName || !userName || !password) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
   }
@@ -19,37 +23,57 @@ exports.loginController = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Cotraseña Invalida" });
+      return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-    // Aquí podrías generar un token si quisieras
+    // 👉 Generar el token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        company: companyName,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "22h" } // tiempo de expiración del token
+    );
+
     res.status(200).json({
-      message: "Login successful",
+      message: "Login exitoso",
+      token, // ✅ enviamos el token al frontend
+      access: true,
       user: {
         id: user.id,
         name: user.name,
         lastname: user.lastname,
         role: user.role,
-        companyId: user.companyId
-      }
+        company: companyName,
+        status: user.status,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Error del servidor" });
   }
 };
 
-
-
 exports.registerController = async (req, res) => {
-  const { companyName, name, lastName, role, password, status } = req.body;
+  const { companyName, name, lastName, role, password, status, id } = req.body;
 
   if (!companyName || !name || !lastName || !role || !password || !status) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
   }
 
   try {
-    const user = await registerUser({ companyName, name, lastName, role, password, status });
+    const user = await registerUser({
+      companyName,
+      name,
+      lastName,
+      role,
+      password,
+      status,
+      id,
+    });
     res.status(201).json({ message: "Usuario registrado exitosamente", user });
   } catch (error) {
     console.error("Error al registrar usuario:", error);
@@ -57,3 +81,58 @@ exports.registerController = async (req, res) => {
   }
 };
 
+exports.editUserController = async (req, res) => {
+  const { id, dni, companyName, name, lastName, role, password, status } = req.body;
+
+  if (!id || !dni || !companyName || !name || !lastName || !role || !password || !status) {
+    return res.status(400).json({ message: "Faltan campos obligatorios" });
+  }
+
+  try {
+    const user = await editUserService({
+      id,
+      companyName,
+      name,
+      lastName,
+      role,
+      password,
+      dni
+    });
+    res.status(200).json({ message: "Usuario editado exitosamente", user });
+  } catch (error) {
+    console.error("Error al editar usuario:", error);
+    res.status(500).json({ message: error.message || "Error del servidor" });
+  }
+};
+
+
+exports.deleteUserController = async (req, res) => {
+  const { id,name} = req.body;
+
+  if (!id || !name) {
+    return res.status(400).json({ message: "Faltan campos obligatorios" });
+  }
+
+  try {
+    const user = await deleteUserService({
+      id,
+      name
+    });
+    res.status(200).json({ message: "Usuario eliminado exitosamente", user });
+  } catch (error) {
+    console.error("Error al eliminar el  usuario:", error);
+    res.status(500).json({ message: error.message || "Error del servidor" });
+  }
+};
+
+exports.getUsersController = async (req, res) => {
+  const { company } = req.body;
+
+  try {
+    const users = await getUsersService({ company });
+    res.status(200).json({ message: "Usuarios encontrados exitosamente", users });
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    res.status(500).json({ message: error.message || "Error del servidor" });
+  }
+};
