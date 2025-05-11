@@ -45,5 +45,5 @@ exports.loginValidation = [
 
   exports.getUsersValidation = [
     // body("PIN").notEmpty().withMessage("El PIN del SUPERADMIN ES OBLIGATORIO"),
-    body("company").notEmpty().withMessage("La empresa ES OBLIGATORIA")
+    body("companyName").notEmpty().withMessage("La empresa ES OBLIGATORIA")
   ]

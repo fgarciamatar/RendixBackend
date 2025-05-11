@@ -126,11 +126,19 @@ exports.deleteUserController = async (req, res) => {
 };
 
 exports.getUsersController = async (req, res) => {
-  const { company } = req.body;
+  const { companyName } = req.body;
 
   try {
-    const users = await getUsersService({ company });
-    res.status(200).json({ message: "Usuarios encontrados exitosamente", users });
+    const users = await getUsersService({ companyName });
+    const userList = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      lastName: user.lastName,
+      role: user.role,
+      status: user.status,
+      companyId: user.companyId,
+    }));
+    res.status(200).json({ message: "Usuarios encontrados exitosamente", userList });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(500).json({ message: error.message || "Error del servidor" });

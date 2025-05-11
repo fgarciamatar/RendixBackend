@@ -64,8 +64,11 @@ exports.editUserService = async ({
   id,
   dni,
 }) => {
+
+  // console.log("DATA",companyName, name, lastName, role, password, status, id, dni);
+  
   const usuario = await User.findOne({ where: { id: id } });
-  if (!usuario) throw new Error("usuario no encontrada");
+  if (!usuario) throw new Error("usuario no encontrado");
 
   const newUser = await User.update(
     {
@@ -75,7 +78,7 @@ exports.editUserService = async ({
       role,
       password,
       status,
-      companyId: company.id,
+      companyName,
     },
     { where: { id } }
   );
@@ -95,15 +98,15 @@ exports.deleteUserService = async ({ id, name }) => {
 };
 
 
-exports.getUsersService = async ({ PIN, company }) => {
+exports.getUsersService = async ({companyName }) => {
   // const superadmin = await SuperAdmin.findOne();
   // if (!superadmin) throw new Error("SUPERADMIN no encontrado");
 
   // const passwordMatch = await bcrypt.compare(PIN.toString(), superadmin.password);
   // if (!passwordMatch) throw new Error("PIN incorrecto");
 
-  const empresa = await Company.findOne({ where: { name: company } });
-  if (!empresa) throw new Error(`La empresa '${company}' no fue encontrada`);
+  const empresa = await Company.findOne({ where: { name: companyName } });
+  if (!empresa) throw new Error(`La empresa '${companyName}' no fue encontrada`);
 
   const users = await User.findAll({
     where: { companyId: empresa.id },
