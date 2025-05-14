@@ -3,13 +3,11 @@ const { findUserByCompanyAndName } = require("./../services/UserServices");
 const { registerUser, editUserService, deleteUserService, getUsersService} = require("../services/UserServices");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { logger } = require("sequelize/lib/utils/logger");
+
 
 
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
-
-  console.log("Login attempt", { companyName, userName });
 
   if (!companyName || !userName || !password) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
@@ -35,12 +33,29 @@ exports.loginController = async (req, res) => {
         company: companyName,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "22h" } // tiempo de expiración del token
+      { expiresIn: "22h" }
     );
 
+    // 👉 Setear cookie segura (httpOnly)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // Solo con HTTPS en producción
+      sameSite: "Lax", // O "None" si usás dominios cruzados con HTTPS
+      maxAge: 22 * 60 * 60 * 1000, // 22 horas en milisegundos
+    });
+
+    
+    //PRODUCCION
+//     res.cookie("token", token, {
+//   httpOnly: true,
+//   secure: true, // Solo HTTPS
+//   sameSite: "None", // Si necesitas cross-site
+//   maxAge: 3600000,
+// });
+
+    // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
       message: "Login exitoso",
-      token, // ✅ enviamos el token al frontend
       access: true,
       user: {
         id: user.id,
@@ -53,7 +68,7 @@ exports.loginController = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Error del servidor" });
+    res.status(500).json({ message: "Error del servidor", access: false });
   }
 };
 

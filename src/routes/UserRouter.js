@@ -92,7 +92,22 @@ router.post("/deleteUser", deleteValidation, validateFields, deleteUserControlle
 router.post("/getUsers",getUsersValidation, validateFields, getUsersController);
 
 router.get("/verify-token", verifyTokenMiddleware, (req, res) => {
-  res.status(200).json({ valid: true, user: req.user });
+  // Si llega acá, el token es válido
+  res.status(200).json({
+    authorized: true,
+    user: req.user, 
+  });
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true, // solo en producción
+    sameSite: "strict",
+    path: "/",
+  });
+
+  res.status(200).json({ message: "Logout exitoso" });
 });
 
 module.exports = router;
