@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize")
-const { sequelize } = require("../models/database")
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../models/database");
 
 const CashBox = sequelize.define("CashBox", {
   id: {
@@ -7,31 +7,18 @@ const CashBox = sequelize.define("CashBox", {
     primaryKey: true,
     autoIncrement: true,
   },
-  date: {
-    type: DataTypes.DATEONLY,
+  shift: {
+    type: DataTypes.ENUM("morning", "afternoon"),
     allowNull: false,
-  },
-  morningCashId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  eveningCashId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
   },
   totalCash: {
     type: DataTypes.DECIMAL(15, 2),
     allowNull: true,
   },
-  totalSystem: {
+  sale: {
     type: DataTypes.DECIMAL(15, 2),
     allowNull: true,
-  },
-  companyId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
   },
 });
 
 module.exports = CashBox;
-

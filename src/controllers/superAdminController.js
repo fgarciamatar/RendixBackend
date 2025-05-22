@@ -1,5 +1,5 @@
 // src/controllers/superAdminController.js
-const { sendPINEmail } = require("../utils/validators/mailer");
+const { sendPINEmail } = require("../utils/mailer");
 const bcrypt = require("bcrypt");
 const { SuperAdmin: SuperAdminModel } = require("./../models/index");
 

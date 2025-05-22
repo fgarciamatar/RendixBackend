@@ -6,8 +6,16 @@ const Transfer = sequelize.define("Transfer", {
     primaryKey: true,
     autoIncrement: true,
   },
-  clientNumber: {
+  numberOperation: {
+     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  salesman: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  clientNumber: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   clientName: {
@@ -30,17 +38,18 @@ const Transfer = sequelize.define("Transfer", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  receipt: {
+  receiptImage: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  userId: {
-    type: DataTypes.STRING,
-    allowNull: false,
   },
   companyId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM("pending", "review", "approved ", "rejected"),
+    allowNull: false,
+    defaultValue: "pending",
   },
 });
 

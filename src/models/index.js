@@ -22,16 +22,21 @@ Company.hasMany(Sheet, { foreignKey: "companyId" });
 Sheet.belongsTo(Company, { foreignKey: "companyId" });
 
 // Sheet → CashBox (morning, afternoon)
-Sheet.hasMany(CashBox, { foreignKey: "sheetId" });
-CashBox.belongsTo(Sheet, { foreignKey: "sheetId" });
 
-// CashBox → CashDetail
-CashBox.hasOne(CashDetail, { foreignKey: "cashBoxId" });
-CashDetail.belongsTo(CashBox, { foreignKey: "cashBoxId" });
+Sheet.belongsTo(CashBox, { as: 'cajaManana', foreignKey: 'cajaMananaId' });
+Sheet.belongsTo(CashBox, { as: 'cajaTarde', foreignKey: 'cajaTardeId' });
 
-// CashBox → Movements
-CashBox.hasMany(Movement, { foreignKey: "cashBoxId" });
-Movement.belongsTo(CashBox, { foreignKey: "cashBoxId" });
+// Una caja tiene muchos movimientos
+CashBox.hasMany(Movement, { foreignKey: 'cashboxId' });
+Movement.belongsTo(CashBox, { foreignKey: 'cashboxId' });
+
+// Una caja tiene un detalle de billetes
+CashBox.hasOne(CashDetail, { foreignKey: 'cashboxId' });
+CashDetail.belongsTo(CashBox, { foreignKey: 'cashboxId' });
+
+// Una caja puede estar asociada como caja de mañana o tarde en una planilla
+CashBox.hasOne(Sheet, { as: 'comoCajaManana', foreignKey: 'cajaMananaId' });
+CashBox.hasOne(Sheet, { as: 'comoCajaTarde', foreignKey: 'cajaTardeId' });
 
  
 module.exports = {
