@@ -20,7 +20,7 @@ exports.createSAController = async (req, res) => {
       email,
       password, // Asume que el modelo tiene hash automático o lo haces antes
     });
-    res.status(201).json({ message: "Super Admin creado y email enviado ✅" });
+    res.status(201).json({ message: "Super Admin creado y email enviado ✅", superAdmin });
   } catch (error) {
     console.error("Error al crear SUPER ADMIN:", error);
     res.status(500).json({ error: "Error interno ❌", detalle: error.message });

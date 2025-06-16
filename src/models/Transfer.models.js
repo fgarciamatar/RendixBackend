@@ -22,7 +22,11 @@ const Transfer = sequelize.define("Transfer", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  date: {
+  dateTransfer: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+   dateOfLoading: {
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
@@ -42,14 +46,17 @@ const Transfer = sequelize.define("Transfer", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  companyId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   status: {
-    type: DataTypes.ENUM("pending", "review", "approved ", "rejected"),
+    type: DataTypes.ENUM("pending", "review", "approved", "rejected"),
     allowNull: false,
     defaultValue: "pending",
+  },
+  cashboxId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "CashBoxes",
+      key: "id",
+    }
   },
 });
 

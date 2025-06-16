@@ -4,12 +4,13 @@ const {
   createTransferController,
   changeStateTransferController,
   getAllTransfersController,
-  getTransfersByFiltersController
+  getTransfersByFiltersController,
+  deleteAllTransferController
 } = require("../controllers/TransferController");
 const { get } = require("mongoose");
 const { upload } = require("../middleware/cloudinary");
 
-router.post("/createTransfer", upload.single("receipt"), createTransferController);
+router.post("/createTransfer",upload.single('receiptImage'),  createTransferController);
 //Cambiar estado transfer
 router.post("/changeStateTransfer", changeStateTransferController);
 
@@ -18,5 +19,8 @@ router.get("/getAllTransfers", getAllTransfersController);
 
 //FILTRAR POR fecha, estado, vendedor, banco de origen y banco de destino
 router.get("/getAllTransfersByFilters",getTransfersByFiltersController)
+
+//FILTRAR POR fecha, estado, vendedor, banco de origen y banco de destino
+router.delete("/deleteAllTransfer", deleteAllTransferController)
 
 module.exports = router;

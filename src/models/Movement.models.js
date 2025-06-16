@@ -20,7 +20,7 @@ const Movement = sequelize.define("Movement", {
     allowNull: false,
   },
   conceptType: {
-    type: DataTypes.STRING, // ej: "transferencia", "venta", "otro"
+    type: DataTypes.STRING, // ej: "transferencia", "venta", "detalleEfectivo"
     allowNull: false,
   },
   esDetalleEfectivo: {
@@ -37,6 +37,7 @@ const Movement = sequelize.define("Movement", {
     },
     onDelete: "CASCADE",
   },
+  
 });
 
 module.exports = Movement;

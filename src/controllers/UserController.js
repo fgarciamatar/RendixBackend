@@ -152,6 +152,7 @@ exports.getUsersController = async (req, res) => {
       role: user.role,
       status: user.status,
       companyId: user.companyId,
+      lastTransferAt: user.lastTransferAt
     }));
     res.status(200).json({ message: "Usuarios encontrados exitosamente", userList });
   } catch (error) {

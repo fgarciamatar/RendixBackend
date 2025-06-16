@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize")
-const { sequelize } = require("../models/database")
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../models/database");
 
 const User = sequelize.define("User", {
   id: {
@@ -29,8 +29,15 @@ const User = sequelize.define("User", {
   companyId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: "Companies", // Debe coincidir con el nombre de la tabla, no del archivo
+      key: "id",
+    },
+    lastTransferAt: {
+      type: DataTypes.DATE,
+      // allowNull: true,
+    },
   },
 });
-
 
 module.exports = User;

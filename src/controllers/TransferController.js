@@ -3,6 +3,7 @@ const {
   changeOfStateTransferService,
   getAllTransfersServices,
   getTransfersByFiltersService,
+  deleteAllTransfersService
 } = require("../services/TransferServices");
 exports.createTransferController = async (req, res) => {
   try {
@@ -11,25 +12,27 @@ exports.createTransferController = async (req, res) => {
       salesman,
       clientNumber,
       clientName,
-      date,
+      dateTransfer,
+      dateOfLoading,
       amount,
       originBank,
       destinationBank,
-      companyId,
+      
     } = req.body;
 
     const receiptImage = req.file?.path || null; // URL de Cloudinary
-
+    console.log("amountController", isNaN(amount));
+    
     if (
       !numberOperation ||
       !salesman ||
       !clientNumber ||
       !clientName ||
-      !date ||
+      !dateTransfer ||
+      !dateOfLoading ||
       !amount ||
       !originBank ||
-      !destinationBank ||
-      !companyId
+      !destinationBank
     ) {
       return res
         .status(400)
@@ -41,12 +44,12 @@ exports.createTransferController = async (req, res) => {
       salesman,
       clientNumber,
       clientName,
-      date,
-      amount,
+      dateTransfer,
+      dateOfLoading,
+      amount: Number(amount), // Aseguramos que amount sea un número
       originBank,
       destinationBank,
       receiptImage,
-      companyId,
     });
 
     return res.status(201).json(newTransfer);
@@ -84,6 +87,9 @@ exports.getAllTransfersController = async (req, res) => {
   try {
     const transfers = await getAllTransfersServices();
 
+    // console.log("Transfers fetched:", transfers);
+    
+
     return res.status(200).json(transfers);
   } catch (error) {
     console.error("Error fetching transfers:", error);
@@ -113,3 +119,13 @@ exports.getTransfersByFiltersController = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.deleteAllTransferController = async (req, res) => {
+  try {
+const deleteTransfers =  await deleteAllTransfersService();
+    return res.status(200).json({ message: "All transfers deleted successfully",deleteTransfers });
+  } catch (error) {
+    console.error("Error deleting all transfers:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}

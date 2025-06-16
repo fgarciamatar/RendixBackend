@@ -19,6 +19,13 @@ const CashBox = sequelize.define("CashBox", {
     type: DataTypes.DECIMAL(15, 2),
     allowNull: true,
   },
+   sheetId: {
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  references: {
+    model: "Sheets", // Debe coincidir con el nombre de la tabla, no del archivo
+    key: "id",
+  },}
 });
 
 module.exports = CashBox;

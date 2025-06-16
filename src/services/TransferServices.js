@@ -1,10 +1,18 @@
-const { Transfer } = require("./../models/index");
+const { Transfer, User } = require("./../models/index");
 const { Op } = require("sequelize");
 
 exports.createTransferService = async (transferData) => {
   try {
     // Assuming you have a Transfer model defined
+
+    console.log("Transfer Data:", transferData);
+    
     const newTransfer = await Transfer.create(transferData);
+    const { salesman } = transferData;
+    await User.update(
+      { lastTransferAt: new Date(), status: "active" },
+      { where: { name: salesman } }
+    );
     return newTransfer;
   } catch (error) {
     console.error("Error creating transfer in service:", error);
@@ -38,7 +46,6 @@ exports.getAllTransfersServices = async () => {
     return await Transfer.findAll({
       order: [["id", "DESC"]],
     });
- 
   } catch (error) {
     console.error("Error fetching all transfers:", error);
     throw error; // Rethrow the error to be handled in the controller
@@ -68,4 +75,18 @@ exports.getTransfersByFiltersService = async (filters) => {
     where,
     order: [["id", "ASC"]],
   });
+};
+
+exports.deleteAllTransfersService = async () => {
+  try {
+    // Assuming you have a Transfer model defined
+    const deletedCount = await Transfer.destroy({
+      where: {},
+      truncate: true, // This will delete all records
+    });
+    return deletedCount;
+  } catch (error) {
+    console.error("Error deleting all transfers:", error);
+    throw error; // Rethrow the error to be handled in the controller
+  }
 };

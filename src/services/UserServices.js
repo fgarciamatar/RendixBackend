@@ -105,11 +105,11 @@ exports.getUsersService = async ({companyName }) => {
   // const passwordMatch = await bcrypt.compare(PIN.toString(), superadmin.password);
   // if (!passwordMatch) throw new Error("PIN incorrecto");
 
-  const empresa = await Company.findOne({ where: { name: companyName } });
-  if (!empresa) throw new Error(`La empresa '${companyName}' no fue encontrada`);
+  const user = await Company.findOne({ where: { name: companyName } });
+  if (!user) throw new Error(`La user '${companyName}' no fue encontrada`);
 
   const users = await User.findAll({
-    where: { companyId: empresa.id },
+    where: { companyId: user.id },
   });
 
   return users;

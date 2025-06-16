@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { connectDB } = require("./src/models/database");
+require("./src/jobs/inactiveUsers");
+
 
 const routes = require("./src/routes/index");
 const swaggerUi = require("swagger-ui-express");
