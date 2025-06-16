@@ -22,8 +22,8 @@ Company.hasMany(Sheet, { foreignKey: "companyId" });
 Sheet.belongsTo(Company, { foreignKey: "companyId" });
 
 // Sheet → CashBox (morning, afternoon)
-Sheet.belongsTo(CashBox, { foreignKey: 'sheetId' });
-Sheet.belongsTo(CashBox, {foreignKey: 'sheetId' });
+Sheet.hasMany(CashBox, { foreignKey: 'sheetId' });
+CashBox.belongsTo(Sheet, { foreignKey: 'sheetId' });
 
 // Una caja tiene muchos movimientos
 CashBox.hasMany(Movement, { foreignKey: 'cashboxId' });
