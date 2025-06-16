@@ -11,36 +11,44 @@ const swaggerSpec = require("./src/config/swagger");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://rendix-7iqvetyf0-fgarciamatars-projects.vercel.app"
+];
+
+// Middleware CORS
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://rendix-7iqvetyf0-fgarciamatars-projects.vercel.app"
-  ],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
-// Preflight support
-app.options('*', cors({
-  origin: [
-    "http://localhost:3000",
-    "https://rendix-7iqvetyf0-fgarciamatars-projects.vercel.app"
-  ],
+// Preflight (OPTIONS) support
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
-// Reforzar headers manualmente (opcional)
+// Manual CORS headers (backup y para seguridad extra)
 app.use((req, res, next) => {
-  const allowedOrigins = [
-    "http://localhost:3000",
-    "https://rendix-7iqvetyf0-fgarciamatars-projects.vercel.app"
-  ];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
