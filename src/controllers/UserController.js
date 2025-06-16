@@ -37,21 +37,21 @@ exports.loginController = async (req, res) => {
     );
 
     // 👉 Setear cookie segura (httpOnly)
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false, // Solo con HTTPS en producción
-      sameSite: "Lax", // O "None" si usás dominios cruzados con HTTPS
-      maxAge: 22 * 60 * 60 * 1000, // 22 horas en milisegundos
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false, // Solo con HTTPS en producción
+    //   sameSite: "Lax", // O "None" si usás dominios cruzados con HTTPS
+    //   maxAge: 22 * 60 * 60 * 1000, // 22 horas en milisegundos
+    // });
 
     
-    //PRODUCCION
-//     res.cookie("token", token, {
-//   httpOnly: true,
-//   secure: true, // Solo HTTPS
-//   sameSite: "None", // Si necesitas cross-site
-//   maxAge: 3600000,
-// });
+    PRODUCCION
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: true, // Solo HTTPS
+  sameSite: "None", // Si necesitas cross-site
+  maxAge: 3600000,
+});
 
     // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
