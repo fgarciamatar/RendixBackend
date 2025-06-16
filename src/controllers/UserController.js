@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 
 
+
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
 
@@ -45,7 +46,7 @@ exports.loginController = async (req, res) => {
     // });
 
     
-    PRODUCCION
+    // PRODUCCION
     res.cookie("token", token, {
   httpOnly: true,
   secure: true, // Solo HTTPS
