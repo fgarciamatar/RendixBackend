@@ -47,12 +47,12 @@ exports.loginController = async (req, res) => {
 
     
     // PRODUCCION
-    res.cookie("token", token, {
-  httpOnly: true,
-  secure: true, // Solo HTTPS
-  sameSite: "None", // Si necesitas cross-site
-  maxAge: 3600000,
-});
+//     res.cookie("token", token, {
+//   httpOnly: true,
+//   secure: true, // Solo HTTPS
+//   sameSite: "None", // Si necesitas cross-site
+//   maxAge: 3600000,
+// });
 
     // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
