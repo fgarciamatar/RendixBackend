@@ -25,17 +25,17 @@ exports.loginController = async (req, res) => {
       return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-    // 👉 Generar el token
-    const token = jwt.sign(
-      {
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        company: companyName,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "22h" }
-    );
+    // // 👉 Generar el token
+    // const token = jwt.sign(
+    //   {
+    //     id: user.id,
+    //     name: user.name,
+    //     role: user.role,
+    //     company: companyName,
+    //   },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "22h" }
+    // );
 
     // 👉 Setear cookie segura (httpOnly)
     // res.cookie("token", token, {
@@ -58,7 +58,7 @@ exports.loginController = async (req, res) => {
     res.status(200).json({
       message: "Login exitoso",
       access: true,
-      token,
+      token: "125sdad",
       user: {
         id: user.id,
         name: user.name,
