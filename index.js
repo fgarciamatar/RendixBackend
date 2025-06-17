@@ -12,7 +12,6 @@ const swaggerSpec = require("./src/config/swagger");
 const app = express();
 app.use(cors({
     origin: [
-    "http://localhost:3000", // para desarrollo
     "https://rendix.vercel.app", // frontend en Vercel
 
   ],

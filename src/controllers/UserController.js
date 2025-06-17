@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 
 
 
-
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
 
@@ -25,19 +24,19 @@ exports.loginController = async (req, res) => {
       return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-    // // 👉 Generar el token
-    // const token = jwt.sign(
-    //   {
-    //     id: user.id,
-    //     name: user.name,
-    //     role: user.role,
-    //     company: companyName,
-    //   },
-    //   process.env.JWT_SECRET,
-    //   { expiresIn: "22h" }
-    // );
+    // 👉 Generar el token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        company: companyName,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "22h" }
+    );
 
-    // 👉 Setear cookie segura (httpOnly)
+    // // 👉 Setear cookie segura (httpOnly)
     // res.cookie("token", token, {
     //   httpOnly: true,
     //   secure: false, // Solo con HTTPS en producción
@@ -46,19 +45,18 @@ exports.loginController = async (req, res) => {
     // });
 
     
-    // PRODUCCION
-//     res.cookie("token", token, {
-//   httpOnly: true,
-//   secure: true, // Solo HTTPS
-//   sameSite: "None", // Si necesitas cross-site
-//   maxAge: 3600000,
-// });
+    //PRODUCCION
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: true, // Solo HTTPS
+  sameSite: "None", // Si necesitas cross-site
+  maxAge: 3600000,
+});
 
     // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
       message: "Login exitoso",
       access: true,
-      token: "125sdad",
       user: {
         id: user.id,
         name: user.name,
