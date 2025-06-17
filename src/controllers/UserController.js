@@ -58,6 +58,7 @@ exports.loginController = async (req, res) => {
     res.status(200).json({
       message: "Login exitoso",
       access: true,
+      token,
       user: {
         id: user.id,
         name: user.name,
