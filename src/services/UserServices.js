@@ -1,3 +1,4 @@
+
 const bcrypt = require("bcrypt");
 const { User, Company, SuperAdmin } = require("./../models/index");
 

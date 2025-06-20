@@ -25,29 +25,30 @@ exports.loginController = async (req, res) => {
       return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-      // Crear el payload
-    const payload = {
-      id: user.id,
-      name: user.name,
-      role: user.role,
-      company: companyName,
-    };
+    // 👉 Generar el token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        company: companyName,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "22h" }
+    );
 
-     // Crear accessToken (expira en 1 hora)
-    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-      // Crear refreshToken (expira en 7 días)
-    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-      expiresIn: "7d",
-    });
+    //PRODUCCION
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: true, // Solo HTTPS
+  sameSite: "None", // Si necesitas cross-site
+  maxAge: 3600000,
+});
 
-   // Responder con ambos tokens
+    // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
       message: "Login exitoso",
       access: true,
-      accessToken,
-      refreshToken,
       user: {
         id: user.id,
         name: user.name,
@@ -151,30 +152,3 @@ exports.getUsersController = async (req, res) => {
     res.status(500).json({ message: error.message || "Error del servidor" });
   }
 };
-
-exports.refreshTokenController = async (req, res) => {
-const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(401).json({ message: "No se proporcionó refreshToken" });
-  }
-
-  try {
-    const userData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-    const newAccessToken = jwt.sign(
-      {
-        id: userData.id,
-        name: userData.name,
-        role: userData.role,
-        company: userData.company,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({ accessToken: newAccessToken });
-  } catch (error) {
-    res.status(403).json({ message: "Refresh token inválido o expirado" });
-  }
-}

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { loginController } = require("../controllers/UserController");
-const { registerController, editUserController, deleteUserController, getUsersController,refreshTokenController } = require("../controllers/UserController");
+const { registerController, editUserController, deleteUserController, getUsersController } = require("../controllers/UserController");
 const { validateFields } = require("../middleware/validateFields");
 const { loginValidation, registerValidation, editValidation, deleteValidation, getUsersValidation } = require("../utils/validators/UserValidators");
 const verifyTokenMiddleware = require("../middleware/verifyTokenMiddleware");
@@ -18,9 +18,6 @@ router.put("/editUser", editValidation, validateFields, editUserController);
 router.post("/deleteUser", deleteValidation, validateFields, deleteUserController);
 //traer todos los usuarios por empresa
 router.post("/getUsers",getUsersValidation, validateFields, getUsersController);
-
-//REFRESH TOKEN
-router.post("/refreshToken",refreshTokenController)
 
 router.get("/verify-token", verifyTokenMiddleware, (req, res) => {
   // Si llega acá, el token es válido
