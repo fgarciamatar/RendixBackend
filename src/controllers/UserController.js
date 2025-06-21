@@ -9,25 +9,30 @@ const jwt = require("jsonwebtoken");
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
 
+  // 🚫 Validación de campos vacíos
   if (!companyName || !userName || !password) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
   }
 
   try {
+    // 🧑 Buscar el usuario por empresa y nombre
     const user = await findUserByCompanyAndName(companyName, userName);
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    // 🚫 Validar que tenga contraseña válida
     if (!user.password || typeof user.password !== "string") {
-      return res.status(400).json({ message: "Contraseña no válida para este usuario" });
+      return res.status(400).json({ message: "El usuario no tiene contraseña válida" });
     }
 
+    // 🔐 Validar la contraseña
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Contraseña inválida" });
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
+    // ✅ SOLO SI TODO PASA, generar el token
     const token = jwt.sign(
       {
         id: user.id,
@@ -39,6 +44,7 @@ exports.loginController = async (req, res) => {
       { expiresIn: "22h" }
     );
 
+    // ✅ Setear cookie solo si pasó todo
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -46,7 +52,8 @@ exports.loginController = async (req, res) => {
       maxAge: 3600000,
     });
 
-    res.status(200).json({
+    // 🟢 Enviar respuesta con datos del usuario
+    return res.status(200).json({
       message: "Login exitoso",
       access: true,
       user: {
@@ -60,7 +67,7 @@ exports.loginController = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Error del servidor", access: false });
+    return res.status(500).json({ message: "Error del servidor", access: false });
   }
 };
 
