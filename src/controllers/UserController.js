@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
-
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
 
@@ -20,12 +19,15 @@ exports.loginController = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    if (!user.password || typeof user.password !== "string") {
+      return res.status(400).json({ message: "Contraseña no válida para este usuario" });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Contraseña inválida" });
     }
 
-    // 👉 Generar el token
     const token = jwt.sign(
       {
         id: user.id,
@@ -37,15 +39,13 @@ exports.loginController = async (req, res) => {
       { expiresIn: "22h" }
     );
 
-    //PRODUCCION
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: true, // Solo HTTPS
-  sameSite: "None", // Si necesitas cross-site
-  maxAge: 3600000,
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 3600000,
+    });
 
-    // 👉 También podés devolver los datos por JSON si lo necesitás
     res.status(200).json({
       message: "Login exitoso",
       access: true,
@@ -63,6 +63,7 @@ exports.loginController = async (req, res) => {
     res.status(500).json({ message: "Error del servidor", access: false });
   }
 };
+
 
 exports.registerController = async (req, res) => {
   const { companyName, name, lastName, role, password, status, id } = req.body;

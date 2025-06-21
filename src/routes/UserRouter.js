@@ -30,12 +30,14 @@ router.get("/verify-token", verifyTokenMiddleware, (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true, // solo en producción
-    sameSite: "strict",
+    secure: true,
+    sameSite: "None", // 👈 debe coincidir con el login
     path: "/",
   });
 
   res.status(200).json({ message: "Logout exitoso" });
 });
 
+
 module.exports = router;
+
