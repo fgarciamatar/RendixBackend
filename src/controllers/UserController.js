@@ -1,10 +1,13 @@
-
 require("dotenv").config(); // para leer .env
 const { findUserByCompanyAndName } = require("./../services/UserServices");
-const { registerUser, editUserService, deleteUserService, getUsersService} = require("../services/UserServices");
+const {
+  registerUser,
+  editUserService,
+  deleteUserService,
+  getUsersService,
+} = require("../services/UserServices");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 
 exports.loginController = async (req, res) => {
   const { companyName, userName, password } = req.body;
@@ -21,9 +24,15 @@ exports.loginController = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    // 🔎 LOG DE DEPURACIÓN
+    console.log("➡️ Usuario encontrado:", user);
+    console.log("➡️ Contraseña del usuario:", user.password);
+
     // 🚫 Validar que tenga contraseña válida
     if (!user.password || typeof user.password !== "string") {
-      return res.status(400).json({ message: "El usuario no tiene contraseña válida" });
+      return res
+        .status(400)
+        .json({ message: "El usuario no tiene contraseña válida" });
     }
 
     // 🔐 Validar la contraseña
@@ -67,10 +76,11 @@ exports.loginController = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).json({ message: "Error del servidor", access: false });
+    return res
+      .status(500)
+      .json({ message: "Error del servidor", access: false });
   }
 };
-
 
 exports.registerController = async (req, res) => {
   const { companyName, name, lastName, role, password, status, id } = req.body;
@@ -97,9 +107,19 @@ exports.registerController = async (req, res) => {
 };
 
 exports.editUserController = async (req, res) => {
-  const { id, dni, companyName, name, lastName, role, password, status } = req.body;
+  const { id, dni, companyName, name, lastName, role, password, status } =
+    req.body;
 
-  if (!id || !dni || !companyName || !name || !lastName || !role || !password || !status) {
+  if (
+    !id ||
+    !dni ||
+    !companyName ||
+    !name ||
+    !lastName ||
+    !role ||
+    !password ||
+    !status
+  ) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
   }
 
@@ -111,7 +131,7 @@ exports.editUserController = async (req, res) => {
       lastName,
       role,
       password,
-      dni
+      dni,
     });
     res.status(200).json({ message: "Usuario editado exitosamente", user });
   } catch (error) {
@@ -120,9 +140,8 @@ exports.editUserController = async (req, res) => {
   }
 };
 
-
 exports.deleteUserController = async (req, res) => {
-  const { id,name} = req.body;
+  const { id, name } = req.body;
 
   if (!id || !name) {
     return res.status(400).json({ message: "Faltan campos obligatorios" });
@@ -131,7 +150,7 @@ exports.deleteUserController = async (req, res) => {
   try {
     const user = await deleteUserService({
       id,
-      name
+      name,
     });
     res.status(200).json({ message: "Usuario eliminado exitosamente", user });
   } catch (error) {
@@ -152,9 +171,11 @@ exports.getUsersController = async (req, res) => {
       role: user.role,
       status: user.status,
       companyId: user.companyId,
-      lastTransferAt: user.lastTransferAt
+      lastTransferAt: user.lastTransferAt,
     }));
-    res.status(200).json({ message: "Usuarios encontrados exitosamente", userList });
+    res
+      .status(200)
+      .json({ message: "Usuarios encontrados exitosamente", userList });
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(500).json({ message: error.message || "Error del servidor" });
