@@ -41,6 +41,7 @@ exports.loginController = async (req, res) => {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
+    const EXPIRE_HOURS = 22;
     // ✅ SOLO SI TODO PASA, generar el token
     const token = jwt.sign(
       {
@@ -50,7 +51,7 @@ exports.loginController = async (req, res) => {
         company: companyName,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "22h" }
+      { expiresIn: `${EXPIRE_HOURS}h` }
     );
 
     // ✅ Setear cookie solo si pasó todo
@@ -58,7 +59,7 @@ exports.loginController = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 3600000,
+      maxAge: EXPIRE_HOURS * 60 * 60 * 1000,
     });
 
     // 🟢 Enviar respuesta con datos del usuario
@@ -179,5 +180,39 @@ exports.getUsersController = async (req, res) => {
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
     res.status(500).json({ message: error.message || "Error del servidor" });
+  }
+};
+
+exports.refreshTokenController = (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) return res.status(401).json({ message: "No token" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Podés agregar verificación de expiración cercana (opcional)
+
+    const newToken = jwt.sign(
+      {
+        id: decoded.id,
+        name: decoded.name,
+        role: decoded.role,
+        company: decoded.company,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "22h" }
+    );
+
+    res.cookie("token", newToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 22 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({ message: "Token renovado" });
+  } catch (err) {
+    return res.status(401).json({ message: "Token inválido o expirado" });
   }
 };
