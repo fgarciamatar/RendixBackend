@@ -10,23 +10,30 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./src/config/swagger");
 
 const app = express();
+
+// 🔐 CORS dinámico según variable FRONT
 app.use(
   cors({
-    origin: "https://rendix.vercel.app", // frontend en Vercel
-   credentials: true,
+    origin: process.env.FRONT || "http://localhost:3000", // FRONT desde .env
+    credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/", routes);
 
+// 🟢 Ruta de prueba
 app.get("/", (req, res) => {
-  res.send("Servidor funcionando en Render");
+  res.send(`Servidor funcionando en entorno: ${process.env.NODE_ENV || "desarrollo"}`);
 });
+
+// 🔥 Puerto desde .env o por defecto
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, async () => {
-  await connectDB(); // 📡 Acá conectás
+  await connectDB(); // 📡 Conexión a la BDD
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

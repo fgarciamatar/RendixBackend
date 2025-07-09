@@ -24,9 +24,9 @@ exports.loginController = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // 🔎 LOG DE DEPURACIÓN
-    console.log("➡️ Usuario encontrado:", user);
-    console.log("➡️ Contraseña del usuario:", user.password);
+    // // 🔎 LOG DE DEPURACIÓN
+    // console.log("➡️ Usuario encontrado:", user);
+    // console.log("➡️ Contraseña del usuario:", user.password);
 
     // 🚫 Validar que tenga contraseña válida
     if (!user.password || typeof user.password !== "string") {

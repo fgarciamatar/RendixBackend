@@ -85,10 +85,13 @@ exports.changeStateTransferController = async (req, res) => {
 
 exports.getAllTransfersController = async (req, res) => {
   try {
-    const transfers = await getAllTransfersServices();
+    const { company } = req.query;
 
-    // console.log("Transfers fetched:", transfers);
-    
+    if (!company) {
+      return res.status(400).json({ message: "Falta el parámetro company" });
+    }
+
+    const transfers = await getAllTransfersServices(company);
 
     return res.status(200).json(transfers);
   } catch (error) {
@@ -96,6 +99,7 @@ exports.getAllTransfersController = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 exports.getTransfersByFiltersController = async (req, res) => {
   try {

@@ -20,7 +20,7 @@ router.get("/getAllTransfers", getAllTransfersController);
 //FILTRAR POR fecha, estado, vendedor, banco de origen y banco de destino
 router.get("/getAllTransfersByFilters",getTransfersByFiltersController)
 
-//FILTRAR POR fecha, estado, vendedor, banco de origen y banco de destino
+//BORRAR TODAS LAS TRANSFERENCIAS
 router.delete("/deleteAllTransfer", deleteAllTransferController)
 
 module.exports = router;

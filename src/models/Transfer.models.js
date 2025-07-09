@@ -7,7 +7,7 @@ const Transfer = sequelize.define("Transfer", {
     autoIncrement: true,
   },
   numberOperation: {
-     type: DataTypes.INTEGER,
+     type: DataTypes.BIGINT,
     allowNull: false,
   },
   salesman: {
