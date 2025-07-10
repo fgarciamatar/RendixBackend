@@ -55,49 +55,6 @@ exports.registerUser = async ({
   };
 };
 
-exports.editUserService = async ({
-  companyName,
-  name,
-  lastName,
-  role,
-  password,
-  status,
-  id,
-  dni,
-}) => {
-
-  // console.log("DATA",companyName, name, lastName, role, password, status, id, dni);
-  
-  const usuario = await User.findOne({ where: { id: id } });
-  if (!usuario) throw new Error("usuario no encontrado");
-
-  const newUser = await User.update(
-    {
-      id: dni,
-      name,
-      lastName,
-      role,
-      password,
-      status,
-      companyName,
-    },
-    { where: { id } }
-  );
-
-  return newUser;
-};
-
-exports.deleteUserService = async ({ id, name }) => {
-  const usuario = await User.findOne({ where: { id: id, name: name } });
-  if (!usuario) throw new Error("usuario no encontrada");
-
-  const user = await User.destroy({
-    where: { id },
-  });
-
-  return user;
-};
-
 
 exports.getUsersService = async ({companyName }) => {
   // const superadmin = await SuperAdmin.findOne();

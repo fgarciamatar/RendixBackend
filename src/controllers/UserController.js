@@ -2,8 +2,6 @@ require("dotenv").config(); // para leer .env
 const { findUserByCompanyAndName } = require("./../services/UserServices");
 const {
   registerUser,
-  editUserService,
-  deleteUserService,
   getUsersService,
 } = require("../services/UserServices");
 const bcrypt = require("bcrypt");
@@ -103,59 +101,6 @@ exports.registerController = async (req, res) => {
     res.status(201).json({ message: "Usuario registrado exitosamente", user });
   } catch (error) {
     console.error("Error al registrar usuario:", error);
-    res.status(500).json({ message: error.message || "Error del servidor" });
-  }
-};
-
-exports.editUserController = async (req, res) => {
-  const { id, dni, companyName, name, lastName, role, password, status } =
-    req.body;
-
-  if (
-    !id ||
-    !dni ||
-    !companyName ||
-    !name ||
-    !lastName ||
-    !role ||
-    !password ||
-    !status
-  ) {
-    return res.status(400).json({ message: "Faltan campos obligatorios" });
-  }
-
-  try {
-    const user = await editUserService({
-      id,
-      companyName,
-      name,
-      lastName,
-      role,
-      password,
-      dni,
-    });
-    res.status(200).json({ message: "Usuario editado exitosamente", user });
-  } catch (error) {
-    console.error("Error al editar usuario:", error);
-    res.status(500).json({ message: error.message || "Error del servidor" });
-  }
-};
-
-exports.deleteUserController = async (req, res) => {
-  const { id, name } = req.body;
-
-  if (!id || !name) {
-    return res.status(400).json({ message: "Faltan campos obligatorios" });
-  }
-
-  try {
-    const user = await deleteUserService({
-      id,
-      name,
-    });
-    res.status(200).json({ message: "Usuario eliminado exitosamente", user });
-  } catch (error) {
-    console.error("Error al eliminar el  usuario:", error);
     res.status(500).json({ message: error.message || "Error del servidor" });
   }
 };

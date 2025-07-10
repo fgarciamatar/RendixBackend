@@ -5,6 +5,7 @@ const { connectDB } = require("./src/models/database");
 require("./src/jobs/inactiveUsers");
 const cookieParser = require("cookie-parser");
 
+const createSuperAdminIfNeeded = require("./src/utils/saSetup");
 const routes = require("./src/routes/index");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./src/config/swagger");
@@ -36,4 +37,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
   await connectDB(); // 📡 Conexión a la BDD
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  await createSuperAdminIfNeeded();
 });
