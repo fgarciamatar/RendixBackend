@@ -31,23 +31,23 @@ router.post("/verifyPin", verifyPIN);
 
 //SUPER ADMIN
 // Rutas protegidas con JWT
-router.use(authSuperAdmin); // Todo lo que sigue requiere token válido
+// router.use(authSuperAdmin); // Todo lo que sigue requiere token válido
 
 
 //USUARIOS
-router.put("/editUser", editValidation, editUserController);
-router.post("/deleteUser", deleteValidation, deleteUserController);
-router.post("/getUsers", getUsersValidation, getUsersController);
+router.put("/editUser", editValidation,authSuperAdmin, editUserController);
+router.post("/deleteUser", deleteValidation,authSuperAdmin, deleteUserController);
+router.post("/getUsers", getUsersValidation,authSuperAdmin, getUsersController);
 
 
 //Empresas
-router.post("/createCompany", createCompanyValidation, createCompanyController);
+router.post("/createCompany",authSuperAdmin, createCompanyValidation, createCompanyController);
 
-router.put("/editCompany", editCompanyValidation, editCompanyController);
+router.put("/editCompany",authSuperAdmin, editCompanyValidation, editCompanyController);
 
-router.post("/deleteCompany", deleteCompanyValidation, deletCompanyController);
+router.post("/deleteCompany",authSuperAdmin, deleteCompanyValidation, deletCompanyController);
 
 
-router.get("/getCompanies", getCompaniesController);
+router.get("/getCompanies",authSuperAdmin, getCompaniesController);
 
 module.exports = router;
